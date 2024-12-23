@@ -1,69 +1,49 @@
-bonjour 
-j'espére que vous allez bien 
-aujourd'hui j'ai fait un  modele simple en utilisant CNN pour détection des émotions. 
-**note : que c'est  un modele simple qui ne pas accurate 100% et qui est besoin more training 
+Bonjour, j'espère que vous allez bien !
+Aujourd'hui, je partage un modèle CNN simple pour la détection des émotions.
+Notez qu'il n'est pas encore 100% précis et nécessite plus d'entraînement.
 
-d'accord on va commencer par c quoi CNN:  
-convolutional neural  network qui vas imiter le neurones humains comment ça fonctionne 
--c'est pour les données structurée en grille (exp images ) .
+c quoi CNN ?  
+Un réseau neuronal convolutif (CNN) imite les neurones humains pour analyser des données structurées comme des images.
 
 ****les caractéristiques *********
 
-- couche de convolution : (extraction de caractéristiques d'images) appliquer les filtres pour extraire des caractéristique local 
+- couche de convolution : : Extraction de caractéristiques avec des filtres
 (nb filtres,kernel_size, strides (optionel) ,padding(optionel ) ,activation(optionel),input_kernel)
-dans tp on a choisi :Conv2D(64, (3, 3), activation='relu', input_shape=(48, 48, 1)))
 
-(sigmoid => (val entre 0 et 1)  classification binaire plus adapté que tanh  (entre -1 et 1 ) 
-( pour les couches cachés des neurones : on a Relu , Relu Leaky et Elu ) 
-dans cet tp on a utilisée Relu (couche caché des neurones)  puisque il est plus simple
+-classification binaire : sigmoid (val entre 0 et 1) , tanh  (entre -1 et 1 ) 
+les couches cachés des neurones : on a Relu , Relu Leaky et Elu  
+dans cet tp on a utilisée Relu (couche caché des neurones)
+-softmax :multiclass
 
 -BatchNormalization : Normaliser les activations pour stabiliser l'entraînement.
-
 
 -pooling : 2 types: maxpooling ,averagePooling : reduire la dimension cartes caractéristique extraite
 tout en conservant l'esssentiel 
 
-
--Dense : pour faire des predictions finales d'aprés les caractéristiques extraite de les couches précedent 
+-Dense : Prédictions finales avec Softmax pour classification multiclass.
 dense (nb neurone , activation ) 
-(
-on a utilisée softmax  car elle est classification multiclass( joie ,tristesse,surprise,etc)  )
+( softmax  car elle est classification multiclass( joie ,tristesse,surprise,etc)  )
 
 -régularisation (drop out ,l2 regularization ) : pour éviter le surrapprentissage 
 Dropout : Réduire le surapprentissage en désactivant certains neurones de manière aléatoire.
 
-
 -flatten :transformer multiDimension en un seul vecteur 
-
 
 - optimisation : adam plus famous 
 
--loss function :La fonction de coût mesure l'écart entre les prédictions du modèle et la vérité réelle
+-loss function : mesure l'écart entre les prédictions du modèle et la vérité réelle
 3 types :
 Binary Cross-Entropy : Utilisée pour les tâches de classification binaire.
 Categorical Cross-Entropy : Utilisée pour la classification multiclass(notre cas ).
 Mean Squared Error (MSE) : Utilisée pour les tâches de régression.
 
----Répétition des étapes de convolution et de pooling plusieurs fois
- pour extraire des caractéristiques de plus en plus complexes.
-
 *****************bibliothéques **************************
 import os :Gérer les chemins et fichiers sur le systèm
-
 OpenCV: Traitement d'images.
-
+ Keras pour construire le modèle.
 NumPy: Calculs numériques et manipulation de matrices.
 
 from keras.utils import to_categorical :Convertir les étiquettes (labels) en format one-hot encoding[0 1].
-
-
-from keras.models import Sequential :Créer un modèle de réseau de neurones séquentiel. Pour empiler des couches
- dans un ordre linéaire.
-
--Dense : Ajouter une couche fully connected .
-
-
-
 
  from tensorflow.keras.preprocessing.image import ImageDataGenerator :Générer et augmenter des ensembles de données d'images.
 
@@ -76,8 +56,7 @@ EarlyStopping : Arrêter l'entraînement automatiquement si le modèle ne s'amé
 epochs : itérations
 
 
-from sklearn.metrics import classification_report
- Évaluer les performances du modèle après l'entraînement.
+from sklearn.metrics import classification_report : Évaluer les performances du modèle après l'entraînement.
 ************
 load 
 np.array(images) : Convertit la liste d'images en tableau NumPy .
@@ -87,7 +66,7 @@ np.array(labels) : Convertit les labels en tableau NumPy.
 train_images = np.expand_dims(train_images, axis=-1)
 test_images = np.expand_dims(test_images, axis=-1)
 modéle CNN attendent généralement des données 
-en 3 dimensions pour chaque image :
+en 3 dimensions pour chaque image 
 
 
 ***************************
