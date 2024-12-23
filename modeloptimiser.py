@@ -1,3 +1,4 @@
+#importation des biblio
 import os
 import cv2
 import numpy as np
@@ -9,12 +10,12 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from sklearn.metrics import classification_report
 
-# Define emotions
+# Definir les émotions
 emotions = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
 num_classes = len(emotions)
 
 
-# Function to load images from the dataset
+# fonctions pour load dataset
 def load_images_from_folder(folder):
     images = []
     labels = []
@@ -29,21 +30,21 @@ def load_images_from_folder(folder):
     return np.array(images), np.array(labels)
    
 
-# Load training and testing data
+# load trainer et tester 
 train_images, train_labels = load_images_from_folder("C:/Users/user/.cache/kagglehub/datasets/msambare/fer2013/versions/1/train")
 test_images, test_labels = load_images_from_folder("C:/Users/user/.cache/kagglehub/datasets/msambare/fer2013/versions/1/test")
 
-# Normalize images
+# Normaliser  images
 train_images = train_images.astype('float32') / 255.0
 test_images = test_images.astype('float32') / 255.0
 train_images = np.expand_dims(train_images, axis=-1)
 test_images = np.expand_dims(test_images, axis=-1)
 
-# Convert labels to categorical
+# Convertir  labels to categorical
 train_labels = to_categorical(train_labels, num_classes)
 test_labels = to_categorical(test_labels, num_classes)
 
-# Data augmentation
+# generation data
 datagen = ImageDataGenerator(
     rotation_range=20,
     width_shift_range=0.2,
@@ -55,7 +56,7 @@ datagen = ImageDataGenerator(
 )
 datagen.fit(train_images)
 
-# Build the CNN model
+# Build model
 model = Sequential()
 model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(48, 48, 1)))
 model.add(BatchNormalization())
@@ -71,26 +72,26 @@ model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
-# Compile the model
+# Compilation
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# Define callbacks
+# callbacks
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, min_lr=1e-6)
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
-# Train the model
+# Trainer model
 model.fit(datagen.flow(train_images, train_labels, batch_size=64),
           epochs=50,
           validation_data=(test_images, test_labels),
           callbacks=[reduce_lr, early_stopping])
 
-# Save the trained model
+# Sauvegarde
 model.save('emotion_model3.h5')
 
-# Evaluate model performance
+# Evaluation du performance
 predictions = model.predict(test_images)
 predicted_classes = np.argmax(predictions, axis=1)
 true_classes = np.argmax(test_labels, axis=1)
 
-# Print classification report
+# afficher rapport du  classification
 print(classification_report(true_classes, predicted_classes, target_names=emotions))
