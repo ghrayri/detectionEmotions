@@ -85,7 +85,7 @@ model.fit(datagen.flow(train_images, train_labels, batch_size=64),
           validation_data=(test_images, test_labels),
           callbacks=[reduce_lr, early_stopping])
 
-# Sauvegarde
+# Sauvegarder
 model.save('emotion_model3.h5')
 
 # Evaluation du performance
